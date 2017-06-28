@@ -9,7 +9,7 @@ public class ClientFrontApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ClientFrontApplication.class, args);
 //		System.out.println("Hello");
-		HelloWorld hd = new HelloWorld();
-		hd.gretting();
+//		HelloWorld hd = new HelloWorld();
+//		hd.gretting();
 	}
 }
