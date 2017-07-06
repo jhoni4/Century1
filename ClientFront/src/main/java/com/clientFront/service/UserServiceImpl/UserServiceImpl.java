@@ -2,20 +2,40 @@ package com.clientFront.service.UserServiceImpl;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.clientFront.Dao.UserDao;
+import com.clientFront.dao.RoleDao;
+import com.clientFront.dao.UserDao;
 import com.clientFront.domain.User;
+import com.clientFront.domain.security.UserRole;
+import com.clientFront.service.AccountService;
 import com.clientFront.service.UserService;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+    private RoleDao roleDao;
+	
 
-	public void save(User user) {
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AccountService accountService;
+	
+    public void save(User user) {
 		userDao.save(user);
 	}
 
@@ -49,6 +69,29 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return false;
+	}
+
+	@Override
+	public User createUser(User user, Set<UserRole> userRoles) {
+		User localUser = userDao.findByUsername(user.getUsername());
+		
+		if(localUser != null){
+			LOG.info("User with username {} a)lready exist. Nothing will be done.", user.getUsername());
+		}else {
+			String encrypyedPassword = passwordEncoder.encode(user.getPassword());
+			user.setPassword(encrypyedPassword);
+			for (UserRole ur : userRoles){
+				roleDao.save(ur.getRole());
+			}
+			
+			user.getUserRoles().addAll(userRoles);
+			user.setPrimaryAccount(accountService.createPrimaryAccount());
+			user.setSavingsAccount(accountService.createSavingsAccount());
+			
+			localUser = userDao.save(user);
+		}
+		
+		return localUser;
 	}
 
 }

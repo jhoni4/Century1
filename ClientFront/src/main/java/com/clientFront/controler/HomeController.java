@@ -1,5 +1,6 @@
 package com.clientFront.controler;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.clientFront.dao.RoleDao;
+import com.clientFront.domain.PrimaryAccount;
+import com.clientFront.domain.SavingsAccount;
 import com.clientFront.domain.User;
+import com.clientFront.domain.security.UserRole;
 import com.clientFront.service.UserService;
 
 @Controller
@@ -19,6 +24,9 @@ public class HomeController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private RoleDao roleDao;
 
 	@RequestMapping("/")
 	public String home() {
@@ -52,11 +60,26 @@ public class HomeController {
 
 			return "signup";
 		} else {
+			Set<UserRole> userRoles = new HashSet<>();
+			userRoles.add(new UserRole(user, roleDao.findByName("ROLE_USER")));
+			
+			userService.createUser(user, userRoles);
 
-			userService.save(user);
-
-			return "redirect:/";
+			return "redirect:/userFront";
 
 		}
+		
 	}
+	
+	@RequestMapping("/userFront")
+	public String userFront(Principal principal, Model model) {
+        User user = userService.findByUsername(principal.getName());
+        PrimaryAccount primaryAccount = user.getPrimaryAccount();
+        SavingsAccount savingsAccount = user.getSavingsAccount();
+
+        model.addAttribute("primaryAccount", primaryAccount);
+        model.addAttribute("savingsAccount", savingsAccount);
+
+        return "userFront";
+    }
 }
