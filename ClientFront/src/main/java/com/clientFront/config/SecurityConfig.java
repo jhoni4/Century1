@@ -34,7 +34,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(12, new SecureRandom(SALT.getBytes()));
 	}
-
+	
+//    @Bean
+//    DataSource dataSource() throws SQLException {
+//
+//        OracleDataSource dataSource = new OracleDataSource();
+//        dataSource.setUser(username);
+//        dataSource.setPassword(password);
+//        dataSource.setURL(url);
+//        dataSource.setImplicitCachingEnabled(true);
+//        dataSource.setFastConnectionFailoverEnabled(true);
+//        return dataSource;
+//    }
 	private static final String[] PUBLIC_MATCHERS = { "/webjars/**", "/css/**", "/js/**", "/images/**", "/",
 			"/about/**", "/contact/**", "/error/**/*", "/console/**", "/signup" };
 
