@@ -1,57 +1,63 @@
 package com.clientFront.domain.security;
 
-import javax.persistence.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.clientFront.domain.User;
 
 @Entity
-@Table(name = "user_role")
+@Table(name="user_role")
 public class UserRole {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long userRoleId;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long userRoleId;
+    public UserRole(User user, Role role) {
+        this.user = user;
+        this.role = role;
+    }
 
-	public UserRole(User user, Role role) {
-		this.user = user;
-		this.role = role;
-	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id")
-	private User user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "role_id")
-	private Role role;
 
-	public UserRole() {
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-	public long getUserRoleId() {
-		return userRoleId;
-	}
+    public UserRole() {}
 
-	public void setUserRoleId(long userRoleId) {
-		this.userRoleId = userRoleId;
-	}
+    public long getUserRoleId() {
+        return userRoleId;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setUserRoleId(long userRoleId) {
+        this.userRoleId = userRoleId;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public Role getRole() {
-		return role;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 
 }
